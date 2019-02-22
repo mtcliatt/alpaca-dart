@@ -3,6 +3,9 @@ import 'dart:io';
 
 import 'package:http/http.dart';
 
+const _alpacaBaseUrl = 'api.alpaca.markets';
+const _alpacaPaperBaseUrl = 'paper-api.alpaca.markets';
+
 class AlpacaApi {
   final BaseClient _client;
   final String _baseUrl;
@@ -13,11 +16,11 @@ class AlpacaApi {
     BaseClient client,
     String keyId,
     String secretKey,
-    String baseUrl,
-  })  : _client = client,
+    bool paperTrading = false,
+  })  : _client = client ?? HttpClient(),
         _keyId = keyId,
         _secretKey = secretKey,
-        _baseUrl = baseUrl;
+        _baseUrl = paperTrading ? _alpacaPaperBaseUrl : _alpacaBaseUrl;
 
   Future<Response> getAccount() => _executeRequest('/v1/account');
 
