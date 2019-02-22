@@ -1,7 +1,4 @@
-A library for Dart developers.
-
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+A Dart wrapper for the Alpaca REST API.
 
 ## Usage
 
@@ -11,7 +8,10 @@ A simple usage example:
 import 'package:alpaca_dart/alpaca_dart.dart';
 
 main() {
-  var awesome = new Awesome();
+  var alpaca = AlpacaApi(
+    keyId: '123451234512345',
+    secretKey: '123451234512345_should_be_longer',
+  );
 }
 ```
 
@@ -19,4 +19,4 @@ main() {
 
 Please file feature requests and bugs at the [issue tracker][tracker].
 
-[tracker]: http://example.com/issues/replaceme
+[tracker]: http://github.com/mtcliatt/alpaca-dart/issues
