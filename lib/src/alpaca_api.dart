@@ -16,11 +16,15 @@ class AlpacaApi {
     BaseClient client,
     String keyId,
     String secretKey,
+    String baseUrl,
+    String paperBaseUrl,
     bool paperTrading = false,
   })  : _client = client ?? HttpClient(),
         _keyId = keyId,
         _secretKey = secretKey,
-        _baseUrl = paperTrading ? _alpacaPaperBaseUrl : _alpacaBaseUrl;
+        _baseUrl = paperTrading
+            ? (paperBaseUrl ?? _alpacaPaperBaseUrl)
+            : (baseUrl ?? _alpacaBaseUrl);
 
   Future<Response> getAccount() => _executeRequest('/v1/account');
 
