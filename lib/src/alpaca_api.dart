@@ -1,147 +1,146 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:http/http.dart';
+import 'package:alpaca_dart/src/requests/account.dart';
+import 'package:alpaca_dart/src/requests/asset.dart';
+import 'package:alpaca_dart/src/requests/calendar.dart';
+import 'package:alpaca_dart/src/requests/clock.dart';
+import 'package:alpaca_dart/src/requests/order.dart';
+import 'package:alpaca_dart/src/requests/position.dart';
+import 'package:http/http.dart' as http;
 
+/// Alpaca REST API wrapper.
 class AlpacaApi {
-  final BaseClient _client;
+  final http.BaseClient _client;
   final String _baseUrl;
   final String _keyId;
   final String _secretKey;
 
   AlpacaApi({
-    BaseClient client,
+    http.BaseClient client,
     String keyId,
     String secretKey,
     String baseUrl = 'api.alpaca.markets',
     String paperBaseUrl = 'paper-api.alpaca.markets',
     bool paperTrading = false,
-  })  : _client = client ?? HttpClient(),
+  })  : _client = client ?? http.Client(),
         _keyId = keyId,
         _secretKey = secretKey,
         _baseUrl = paperTrading ? paperBaseUrl : baseUrl;
 
-  Future<Response> getAccount() => _executeRequest('/v1/account');
+  /** Account **/
+  Future<http.Response> getAccount() => _executeAlpacaRequest(Account.get());
 
-  Future<Response> getCalendar({String start, String end}) {
-    final params = {'start': start, 'end': end};
+  /** Calendar **/
+  Future<http.Response> getCalendar({DateTime start, DateTime end}) =>
+      _executeAlpacaRequest(Calendar.get(start: start, end: end));
 
-    return _executeRequest('/v1/calendar', params: params);
-  }
+  /** Clock **/
+  Future<http.Response> getClock() => _executeAlpacaRequest(Clock.get());
 
-  Future<Response> getClock() => _executeRequest('/v1/clock');
+  /** Assets **/
+  Future<http.Response> getAssets({String status, String assetClass}) =>
+      _executeAlpacaRequest(Asset.get(status: status, assetClass: assetClass));
 
-  Future<Response> getAssets({String status, String assetClass}) {
-    final params = {'status': status, 'asset_class': assetClass};
+  Future<http.Response> getAsset(String symbol) =>
+      _executeAlpacaRequest(Asset.getOne(symbol));
 
-    return _executeRequest('/v1/assets', params: params);
-  }
+  /** Positions **/
+  Future<http.Response> getPositions() => _executeAlpacaRequest(Position.get());
 
-  Future<Response> getAsset({String assetIdentifier}) =>
-      _executeRequest('/v1/assets/$assetIdentifier');
+  Future<http.Response> getPosition({String positionIdentifier}) =>
+      _executeAlpacaRequest(
+          Position.getOne(positionIdentifier: positionIdentifier));
 
-  Future<Response> getPositions() => _executeRequest('/v1/positions');
+  /** Orders **/
+  Future<http.Response> cancelOrder(String orderId) =>
+      _executeAlpacaRequest(Order.cancel(orderId));
 
-  Future<Response> getPosition(String positionIdentifier) =>
-      _executeRequest('/v1/positions/$positionIdentifier');
+  Future<http.Response> getOrder(String orderId) =>
+      _executeAlpacaRequest(Order.getOne(orderId));
 
-  Future<Response> cancelOrder(String orderId) =>
-      _executeRequest('/v1/orders/$orderId', method: 'DELETE');
+  Future<http.Response> getOrders({
+    String status,
+    int limit,
+    DateTime after,
+    DateTime until,
+    String direction,
+  }) =>
+      _executeAlpacaRequest(Order.get(
+        status: status,
+        limit: limit,
+        after: after,
+        until: until,
+        direction: direction,
+      ));
 
-  Future<Response> getOrder(String orderIdentifier) =>
-      _executeRequest('/v1/orders/$orderIdentifier');
+  Future<http.Response> getOrderByClientOrderId(String clientOrderId) =>
+      _executeAlpacaRequest(Order.getByClientOrderId(clientOrderId));
 
-  Future<Response> getOrderByClientOrderId(String clientOrderId) =>
-      _executeRequest('/v1/orders:by_client_order_id/$clientOrderId');
-
-  Future<Response> getOrders(
+  Future<http.Response> createOrder(
     String symbol,
     String quantity,
     String side,
     String type,
     String timeInForce,
     String limitPrice,
-    String stopPrice,
+    String stopPrice, {
     String clientOrderId,
-  ) {
-    final params = {
-      'symbol': symbol,
-      'qty': quantity,
-      'side': side,
-      'type': type,
-      'time_in_force': timeInForce,
-      'limit_price': limitPrice,
-      'stop_price': stopPrice,
-      'client_order_id': clientOrderId,
-    };
+  }) =>
+      _executeAlpacaRequest(Order.create(
+        symbol,
+        quantity,
+        side,
+        type,
+        timeInForce,
+        limitPrice,
+        stopPrice,
+        clientOrderId: clientOrderId,
+      ));
 
-    return _executeRequest('/v1/assets', params: params);
-  }
+  /// Executes the given [AlpacaRequest].
+  ///
+  /// Calls the [BaseClient] to execute the request with the query parameter
+  /// data in the request, after constructing the appropriate headers.
+  Future<http.Response> _executeAlpacaRequest(AlpacaRequest request) async {
+    // If params are empty, don't pass the empty map to Uri or we get a '?' at
+    // the end of the url which is unnecessary and odd when testing.
+    final params = request.params == null || request.params.length == 0
+        ? null
+        : request.params;
+    final uri = Uri.https(_baseUrl, request.path, params);
+    final headers = {
+      'APCA-API-KEY-ID': _keyId,
+      'APCA-API-SECRET-KEY': _secretKey,
+    }..addAll(  // Don't set the content-type header on DELETE requests.
+        request.method == 'DELETE' ? {} : {'content-type': 'application/json'});
 
-  Future<Response> createOrder(
-    String status,
-    String limit,
-    String after,
-    String until,
-    String direction,
-  ) {
-    final params = {
-      'status': status,
-      'limit': limit,
-      'after': after,
-      'until': until,
-      'direction': direction,
-    };
-
-    return _executeRequest('/v1/orders', params: params, method: 'POST');
-  }
-
-  Future<Response> _executeRequest(String requestPath,
-      {Map<String, String> params = const {}, String method = 'GET'}) async {
-    switch (method) {
+    switch (request.method) {
       case 'DELETE':
-        return _client.delete(
-          Uri(
-            host: _baseUrl,
-            scheme: 'https',
-            path: requestPath,
-          ),
-          headers: {
-            'APCA-API-KEY-ID': _keyId,
-            'APCA-API-SECRET-KEY': _secretKey,
-          },
-        );
-
+        return _client.delete(uri, headers: headers);
       case 'POST':
-        return _client.post(
-          Uri(
-            host: _baseUrl,
-            scheme: 'https',
-            path: requestPath,
-          ),
-          body: params,
-          headers: {
-            HttpHeaders.contentTypeHeader: 'application/json',
-            'APCA-API-KEY-ID': _keyId,
-            'APCA-API-SECRET-KEY': _secretKey,
-          },
-        );
-
+        return _client.post(uri, body: request.params, headers: headers);
       case 'GET':
       default:
-        return _client.get(
-          Uri(
-            host: _baseUrl,
-            scheme: 'https',
-            path: requestPath,
-            queryParameters: params,
-          ),
-          headers: {
-            HttpHeaders.contentTypeHeader: 'application/json',
-            'APCA-API-KEY-ID': _keyId,
-            'APCA-API-SECRET-KEY': _secretKey,
-          },
-        );
+        return _client.get(uri, headers: headers);
     }
   }
+}
+
+/// Simple value class to hold request information.
+class AlpacaRequest {
+  final String path;
+  final String method;
+  final Map<String, String> params;
+
+  AlpacaRequest._(this.path, [this.params, this.method]);
+
+  AlpacaRequest.get(String path, [Map<String, String> params])
+      : this._(path, params, 'GET');
+
+  AlpacaRequest.post(String path, [Map<String, String> params])
+      : this._(path, params, 'POST');
+
+  AlpacaRequest.delete(String path, [Map<String, String> params])
+      : this._(path, params, 'DELETE');
 }
