@@ -1,10 +1,10 @@
 import 'package:alpaca_dart/src/alpaca_api.dart';
 
-/// Contains all order-related requests.
 // TODO: add documentation for all requests.
 // TODO: use proper type for each query parameter.
 // TODO: enforce parameter requirements (e.g., limit must be <500).
 
+/// Contains all order-related requests.
 class Order {
   static AlpacaRequest cancel(String orderId) {
     if (orderId == null || orderId.isEmpty) {
@@ -27,8 +27,8 @@ class Order {
       throw ArgumentError('clientOrderId must be a non-empty String.');
     }
 
-    return AlpacaRequest.get('/v1/orders:by_client_order_id',
-          {'client_order_id': clientOrderId});
+    return AlpacaRequest.get(
+        '/v1/orders:by_client_order_id', {'client_order_id': clientOrderId});
   }
 
   /// Retrieves a list of orders for the account,
@@ -86,7 +86,6 @@ class Order {
 
     return AlpacaRequest.get('/v1/assets', params);
   }
-
 
   static AlpacaRequest create(
     String symbol,
