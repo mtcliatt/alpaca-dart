@@ -156,6 +156,33 @@ void main() {
           expect(getAsset, throwsA(const TypeMatcher<ArgumentError>()));
         });
       });
+
+      group('position', () {
+        test('getPositions', () async {
+          final symbol = 'SPY';
+          final expectedPath = 'v1/positions/$symbol';
+
+          await api.getPosition(symbol);
+
+          verifyGetRequest(expectedPath);
+        });
+
+        test('getPosition', () async {
+          final expectedPath = 'v1/positions';
+
+          await api.getPositions();
+
+          verifyGetRequest(expectedPath);
+        });
+
+        test('getPosition throws when given an empty symbol', () async {
+          final badSymbol = '';
+
+          final getPosition = () => api.getPosition(badSymbol);
+
+          expect(getPosition, throwsA(const TypeMatcher<ArgumentError>()));
+        });
+      });
     });
 
     group('Alpaca Data API', () {

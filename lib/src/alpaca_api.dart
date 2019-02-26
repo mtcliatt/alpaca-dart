@@ -51,9 +51,8 @@ class AlpacaApi {
   /** Positions **/
   Future<http.Response> getPositions() => _executeAlpacaRequest(Position.get());
 
-  Future<http.Response> getPosition({String positionIdentifier}) =>
-      _executeAlpacaRequest(
-          Position.getOne(positionIdentifier: positionIdentifier));
+  Future<http.Response> getPosition(String symbol) =>
+      _executeAlpacaRequest(Position.getOne(symbol));
 
   /** Orders **/
   Future<http.Response> cancelOrder(String orderId) =>
@@ -104,7 +103,6 @@ class AlpacaApi {
   /** Bars **/
   Future<http.Response> getBars(String timeframe, symbols) =>
       _executeAlpacaRequest(Bars.get(timeframe, symbols));
-
 
   /// Executes the given [AlpacaRequest].
   ///
