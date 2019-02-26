@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:alpaca_dart/src/requests/account.dart';
 import 'package:alpaca_dart/src/requests/asset.dart';
 import 'package:alpaca_dart/src/requests/calendar.dart';
 import 'package:alpaca_dart/src/requests/clock.dart';
+import 'package:alpaca_dart/src/requests/data/bars.dart';
 import 'package:alpaca_dart/src/requests/order.dart';
 import 'package:alpaca_dart/src/requests/position.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 class AlpacaApi {
   final http.BaseClient _client;
   final String _baseUrl;
+  final String _dataBaseUrl;
   final String _keyId;
   final String _secretKey;
 
@@ -21,11 +22,13 @@ class AlpacaApi {
     String keyId,
     String secretKey,
     String baseUrl = 'api.alpaca.markets',
+    String dataBaseUrl = 'data.alpaca.markets',
     String paperBaseUrl = 'paper-api.alpaca.markets',
     bool paperTrading = false,
-  })  : _client = client ?? http.Client(),
-        _keyId = keyId,
+  })  : _keyId = keyId,
         _secretKey = secretKey,
+        _dataBaseUrl = dataBaseUrl,
+        _client = client ?? http.Client(),
         _baseUrl = paperTrading ? paperBaseUrl : baseUrl;
 
   /** Account **/
@@ -98,6 +101,11 @@ class AlpacaApi {
         clientOrderId: clientOrderId,
       ));
 
+  /** Bars **/
+  Future<http.Response> getBars(String timeframe, symbols) =>
+      _executeAlpacaRequest(Bars.get(timeframe, symbols));
+
+
   /// Executes the given [AlpacaRequest].
   ///
   /// Calls the [BaseClient] to execute the request with the query parameter
@@ -108,11 +116,14 @@ class AlpacaApi {
     final params = request.params == null || request.params.length == 0
         ? null
         : request.params;
-    final uri = Uri.https(_baseUrl, request.path, params);
+    final uri = Uri.https(
+        request is AlpacaDataRequest ? _dataBaseUrl : _baseUrl,
+        request.path,
+        params);
     final headers = {
       'APCA-API-KEY-ID': _keyId,
       'APCA-API-SECRET-KEY': _secretKey,
-    }..addAll(  // Don't set the content-type header on DELETE requests.
+    }..addAll(// Don't set the content-type header on DELETE requests.
         request.method == 'DELETE' ? {} : {'content-type': 'application/json'});
 
     switch (request.method) {
@@ -143,4 +154,10 @@ class AlpacaRequest {
 
   AlpacaRequest.delete(String path, [Map<String, String> params])
       : this._(path, params, 'DELETE');
+}
+
+/// Simple value class to hold request information for Alpaca Data API requests.
+class AlpacaDataRequest extends AlpacaRequest {
+  AlpacaDataRequest(String path, [Map<String, String> params])
+      : super.get(path, params);
 }
