@@ -9,9 +9,19 @@ import 'package:alpaca_dart/alpaca_dart.dart';
 
 main() {
   var alpaca = AlpacaApi(
-    keyId: '123451234512345',
-    secretKey: '123451234512345_should_be_longer',
+    keyId: '...',
+    secretKey: '...',
   );
+  
+  final accountResponse = await api.getAccount();
+  final account = jsonDecode(accountResponse.body);
+  
+  final status = account['status'] == 'ACTIVE' ? 'Active' : 'Inactive';
+  
+  print('Account ID: ${account['id']}');
+  print('Account status: $status');
+  print('Cash value: ${account['cash']}');
+  print('Portfolio value: ${account['portfolio_value']}');
 }
 ```
 
