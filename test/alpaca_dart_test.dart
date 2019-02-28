@@ -197,7 +197,7 @@ void main() {
         });
 
         test('getBars throws with bad symbols argument', () async {
-          final goodTimeframe = '1min';
+          final goodTimeframe = '1Min';
           final badSymbol = 123;  // is not a String or List of Strings.
 
           final getBars = () => api.getBars(goodTimeframe, badSymbol);

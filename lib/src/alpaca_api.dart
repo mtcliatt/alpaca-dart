@@ -101,8 +101,14 @@ class AlpacaApi {
       ));
 
   /** Bars **/
-  Future<http.Response> getBars(String timeframe, symbols) =>
-      _executeAlpacaRequest(Bars.get(timeframe, symbols));
+  Future<http.Response> getBars(String timeframe, symbols,
+          {int limit,
+          DateTime start,
+          DateTime end,
+          DateTime after,
+          DateTime until}) =>
+      _executeAlpacaRequest(Bars.get(timeframe, symbols,
+          limit: limit, start: start, end: end, after: after, until: until));
 
   /// Executes the given [AlpacaRequest].
   ///
