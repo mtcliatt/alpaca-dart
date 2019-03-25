@@ -139,7 +139,7 @@ class AlpacaApi {
   Future<http.Response> _executeAlpacaRequest(AlpacaRequest request) async {
     // If params are empty, don't pass the empty map to Uri or we get a '?' at
     // the end of the url which is unnecessary and odd when testing.
-    final params = request.params == null || request.params.length == 0
+    final params = request.params == null || request.params.isEmpty
         ? null
         : request.params;
     final uri = Uri.https(
