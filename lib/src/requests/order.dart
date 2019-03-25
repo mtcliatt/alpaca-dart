@@ -1,11 +1,12 @@
 import 'package:alpaca_dart/src/alpaca_api.dart';
 
-// TODO: add documentation for all requests.
-// TODO: use proper type for each query parameter.
-// TODO: enforce parameter requirements (e.g., limit must be <500).
-
 /// Contains all order-related requests.
 class Order {
+
+  /// Attempts to cancel an open order.
+  ///
+  /// If the order is no longer cancelable (example: status=order_filled), the
+  /// server will respond with status 422, and reject the request.
   static AlpacaRequest cancel(String orderId) {
     if (orderId == null || orderId.isEmpty) {
       throw ArgumentError('orderId must be a non-empty String.');
@@ -14,6 +15,7 @@ class Order {
     return AlpacaRequest.delete('/v1/orders/$orderId');
   }
 
+  /// Retrieves a single order for the given [orderId].
   static AlpacaRequest getOne(String orderId) {
     if (orderId == null || orderId.isEmpty) {
       throw ArgumentError('orderId must be a non-empty String.');
@@ -22,6 +24,7 @@ class Order {
     return AlpacaRequest.get('/v1/orders/$orderId');
   }
 
+  /// Retrieves a single order for the given [clientOrderId].
   static AlpacaRequest getByClientOrderId(String clientOrderId) {
     if (clientOrderId == null || clientOrderId.isEmpty) {
       throw ArgumentError('clientOrderId must be a non-empty String.');
@@ -34,7 +37,7 @@ class Order {
   /// Retrieves a list of orders for the account,
   /// filtered by the supplied query parameters.
   ///
-  /// Query parameters:
+  /// Optional parameters:
   ///   status: Order status to be queried. open, closed or all. Default: open.
   ///   limit: The maximum number of orders in response. Default: 50, max: 500.
   ///   after: The response will include only ones submitted after
@@ -69,8 +72,8 @@ class Order {
     }
 
     if (limit != null) {
-      if (limit < 0 || limit > 500) {
-        throw ArgumentError('limit must be a positive number <500: $limit');
+      if (limit < 1 || limit > 500) {
+        throw ArgumentError('limit must be a positive number <=500: $limit');
       } else {
         params['limit'] = limit;
       }
@@ -87,14 +90,18 @@ class Order {
     return AlpacaRequest.get('/v1/assets', params);
   }
 
+  /// Places a new order for the given account.
+  ///
+  /// An order request may be rejected if the account is not authorized for
+  /// trading, or if the tradable balance is insufficient to fill the order.
   static AlpacaRequest create(
     String symbol,
     String quantity,
     String side,
     String type,
-    String timeInForce,
+    String timeInForce, {
     String limitPrice,
-    String stopPrice, {
+    String stopPrice,
     String clientOrderId,
   }) {
     final params = {
@@ -107,6 +114,31 @@ class Order {
       'stop_price': stopPrice,
       'client_order_id': clientOrderId,
     }..removeWhere((k, v) => v == null || v.isEmpty);
+
+
+    if (side != 'buy' && side != 'buy') {
+      throw ArgumentError('side must be buy or sell: $side');
+    }
+
+    if (type != 'market' && type != 'limit' && type != 'stop' && type != 'stop_limit') {
+      throw ArgumentError('type must be market, limit, stop, or stop_limit: $type');
+    }
+
+    if (timeInForce != 'day' && timeInForce != 'gtc' && timeInForce != 'opg') {
+      throw ArgumentError('timeInForce must be day, gtc, or opg: $timeInForce');
+    }
+
+    if (type == 'limit' || type == 'stop_limit') {
+      if (limitPrice == null) {
+        throw ArgumentError('limitPrice must be specified for order type: $type');
+      }
+    }
+
+    if (type == 'stop' || type == 'stop_limit') {
+      if (stopPrice == null) {
+        throw ArgumentError('stopPrice must be specified for order type: $type');
+      }
+    }
 
     return AlpacaRequest.post('/v1/orders', params);
   }

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:http/http.dart' as http;
+
 import 'package:alpaca_dart/src/requests/account.dart';
 import 'package:alpaca_dart/src/requests/asset.dart';
 import 'package:alpaca_dart/src/requests/calendar.dart';
@@ -7,7 +9,6 @@ import 'package:alpaca_dart/src/requests/clock.dart';
 import 'package:alpaca_dart/src/requests/data/bars.dart';
 import 'package:alpaca_dart/src/requests/order.dart';
 import 'package:alpaca_dart/src/requests/position.dart';
-import 'package:http/http.dart' as http;
 
 /// Alpaca REST API wrapper.
 class AlpacaApi {
@@ -31,30 +32,52 @@ class AlpacaApi {
         _client = client ?? http.Client(),
         _baseUrl = paperTrading ? paperBaseUrl : baseUrl;
 
-  /** Account **/
+  ///
+  /// Account
+  ///
+
   Future<http.Response> getAccount() => _executeAlpacaRequest(Account.get());
 
-  /** Calendar **/
+  ///
+  /// Calendar
+  ///
+
   Future<http.Response> getCalendar({DateTime start, DateTime end}) =>
       _executeAlpacaRequest(Calendar.get(start: start, end: end));
 
-  /** Clock **/
+
+  ///
+  /// Clock
+  ///
+
   Future<http.Response> getClock() => _executeAlpacaRequest(Clock.get());
 
-  /** Assets **/
+
+  ///
+  /// Assets
+  ///
+
   Future<http.Response> getAssets({String status, String assetClass}) =>
       _executeAlpacaRequest(Asset.get(status: status, assetClass: assetClass));
 
   Future<http.Response> getAsset(String symbol) =>
       _executeAlpacaRequest(Asset.getOne(symbol));
 
-  /** Positions **/
+
+  ///
+  /// Positions
+  ///
+
   Future<http.Response> getPositions() => _executeAlpacaRequest(Position.get());
 
   Future<http.Response> getPosition(String symbol) =>
       _executeAlpacaRequest(Position.getOne(symbol));
 
-  /** Orders **/
+
+  ///
+  /// Orders
+  ///
+
   Future<http.Response> cancelOrder(String orderId) =>
       _executeAlpacaRequest(Order.cancel(orderId));
 
@@ -84,9 +107,9 @@ class AlpacaApi {
     String quantity,
     String side,
     String type,
-    String timeInForce,
+    String timeInForce, {
     String limitPrice,
-    String stopPrice, {
+    String stopPrice,
     String clientOrderId,
   }) =>
       _executeAlpacaRequest(Order.create(
@@ -95,12 +118,15 @@ class AlpacaApi {
         side,
         type,
         timeInForce,
-        limitPrice,
-        stopPrice,
+        limitPrice: limitPrice,
+        stopPrice: stopPrice,
         clientOrderId: clientOrderId,
       ));
 
-  /** Bars **/
+  ///
+  /// Bars
+  ///
+
   Future<http.Response> getBars(String timeframe, symbols,
           {int limit,
           DateTime start,
@@ -127,7 +153,7 @@ class AlpacaApi {
     final headers = {
       'APCA-API-KEY-ID': _keyId,
       'APCA-API-SECRET-KEY': _secretKey,
-    }..addAll(// Don't set the content-type header on DELETE requests.
+    }..addAll(
         request.method == 'DELETE' ? {} : {'content-type': 'application/json'});
 
     switch (request.method) {
