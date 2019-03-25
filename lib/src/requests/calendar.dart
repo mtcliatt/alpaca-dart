@@ -1,4 +1,4 @@
-import 'package:alpaca_dart/src/alpaca_api.dart';
+import 'package:alpaca/src/alpaca_api.dart';
 
 /// Contains all calendar-related requests.
 class Calendar {

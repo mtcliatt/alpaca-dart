@@ -1,3 +1,3 @@
-library alpaca_dart;
+library alpaca;
 
 export './src/alpaca_api.dart';

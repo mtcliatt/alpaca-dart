@@ -4,7 +4,8 @@ import 'package:http/testing.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import 'package:alpaca_dart/src/alpaca_api.dart';
+import 'package:alpaca/alpaca.dart';
+
 import 'util/mocks.dart';
 
 const fakeBaseUrl = 'fake_base_url';

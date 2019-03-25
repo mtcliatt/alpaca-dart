@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:alpaca_dart/alpaca_dart.dart';
+import 'package:alpaca/alpaca.dart';
 
 main() async {
   var alpaca = AlpacaApi(
-    keyId: '...',
-    secretKey: '...',
+    keyId: 'PK7EQG7Q3RVC6DK4BY99',
+    secretKey: 'H5QpmT/QmBoADSDpUeI35GqIvu0C/oYXjTI2DquM',
     paperTrading: true,
   );
 

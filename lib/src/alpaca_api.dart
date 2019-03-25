@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:http/http.dart' as http;
 
-import 'package:alpaca_dart/src/requests/account.dart';
-import 'package:alpaca_dart/src/requests/asset.dart';
-import 'package:alpaca_dart/src/requests/calendar.dart';
-import 'package:alpaca_dart/src/requests/clock.dart';
-import 'package:alpaca_dart/src/requests/data/bars.dart';
-import 'package:alpaca_dart/src/requests/order.dart';
-import 'package:alpaca_dart/src/requests/position.dart';
+import 'package:alpaca/src/requests/account.dart';
+import 'package:alpaca/src/requests/asset.dart';
+import 'package:alpaca/src/requests/calendar.dart';
+import 'package:alpaca/src/requests/clock.dart';
+import 'package:alpaca/src/requests/data/bars.dart';
+import 'package:alpaca/src/requests/order.dart';
+import 'package:alpaca/src/requests/position.dart';
 
 /// Alpaca REST API wrapper.
 class AlpacaApi {
