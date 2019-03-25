@@ -45,13 +45,11 @@ class AlpacaApi {
   Future<http.Response> getCalendar({DateTime start, DateTime end}) =>
       _executeAlpacaRequest(Calendar.get(start: start, end: end));
 
-
   ///
   /// Clock
   ///
 
   Future<http.Response> getClock() => _executeAlpacaRequest(Clock.get());
-
 
   ///
   /// Assets
@@ -63,7 +61,6 @@ class AlpacaApi {
   Future<http.Response> getAsset(String symbol) =>
       _executeAlpacaRequest(Asset.getOne(symbol));
 
-
   ///
   /// Positions
   ///
@@ -72,7 +69,6 @@ class AlpacaApi {
 
   Future<http.Response> getPosition(String symbol) =>
       _executeAlpacaRequest(Position.getOne(symbol));
-
 
   ///
   /// Orders

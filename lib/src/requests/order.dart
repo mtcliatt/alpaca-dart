@@ -2,7 +2,6 @@ import 'package:alpaca_dart/src/alpaca_api.dart';
 
 /// Contains all order-related requests.
 class Order {
-
   /// Attempts to cancel an open order.
   ///
   /// If the order is no longer cancelable (example: status=order_filled), the
@@ -115,13 +114,16 @@ class Order {
       'client_order_id': clientOrderId,
     }..removeWhere((k, v) => v == null || v.isEmpty);
 
-
     if (side != 'buy' && side != 'buy') {
       throw ArgumentError('side must be buy or sell: $side');
     }
 
-    if (type != 'market' && type != 'limit' && type != 'stop' && type != 'stop_limit') {
-      throw ArgumentError('type must be market, limit, stop, or stop_limit: $type');
+    if (type != 'market' &&
+        type != 'limit' &&
+        type != 'stop' &&
+        type != 'stop_limit') {
+      throw ArgumentError(
+          'type must be market, limit, stop, or stop_limit: $type');
     }
 
     if (timeInForce != 'day' && timeInForce != 'gtc' && timeInForce != 'opg') {
@@ -130,13 +132,15 @@ class Order {
 
     if (type == 'limit' || type == 'stop_limit') {
       if (limitPrice == null) {
-        throw ArgumentError('limitPrice must be specified for order type: $type');
+        throw ArgumentError(
+            'limitPrice must be specified for order type: $type');
       }
     }
 
     if (type == 'stop' || type == 'stop_limit') {
       if (stopPrice == null) {
-        throw ArgumentError('stopPrice must be specified for order type: $type');
+        throw ArgumentError(
+            'stopPrice must be specified for order type: $type');
       }
     }
 
