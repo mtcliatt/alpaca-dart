@@ -1,7 +1,12 @@
 name: alpaca_dart
 description: Dart wrapper for the Alpaca REST API.
-# version: 1.0.0
-# author: mtcliatt <matthewcliatt@gmail.com>
+version: 0.0.1
+
+authors:
+  - Matthew Cliatt <matthewcliatt@gmail.com>
+
+repository:
+  https://github.com/mtcliatt/alpaca-dart:
 
 environment:
   sdk: '>=2.0.0 <3.0.0'
