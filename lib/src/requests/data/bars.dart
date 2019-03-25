@@ -1,4 +1,5 @@
 import 'package:alpaca_dart/src/alpaca_api.dart';
+import 'package:alpaca_dart/src/util/formatting.dart';
 
 /// Contains all bars-related requests.
 class Bars {
@@ -22,14 +23,15 @@ class Bars {
   ///       Cannot be used with start.
   ///   until: Filter bars equal to or after this time.
   ///       Cannot be used with end.
-  static AlpacaDataRequest get(String timeframe, symbols,
-      {int limit,
-      DateTime start,
-      DateTime end,
-      DateTime after,
-      DateTime until}) {
-    final Map<String, String> params = {};
-
+  static AlpacaDataRequest get(
+    String timeframe,
+    symbols, {
+    int limit,
+    DateTime start,
+    DateTime end,
+    DateTime after,
+    DateTime until,
+  }) {
     if (timeframe != 'minute' &&
         timeframe != '1Min' &&
         timeframe != '5Min' &&
@@ -47,6 +49,7 @@ class Bars {
       throw ArgumentError('max 200 symbols, ${symbols.length} provided');
     }
 
+    final Map<String, String> params = {};
     params['symbols'] = symbols is List<String> ? symbols.join(',') : symbols;
 
     if (limit != null) {
@@ -66,19 +69,19 @@ class Bars {
     }
 
     if (start != null) {
-      params['start'] = start.toIso8601String();
+      params['start'] = toRfc3339String(start);
     }
 
     if (end != null) {
-      params['end'] = end.toIso8601String();
+      params['end'] = toRfc3339String(end);
     }
 
     if (after != null) {
-      params['after'] = after.toIso8601String();
+      params['after'] = toRfc3339String(after);
     }
 
     if (until != null) {
-      params['until'] = until.toIso8601String();
+      params['until'] = toRfc3339String(until);
     }
 
     return AlpacaDataRequest('v1/bars/${timeframe}', params);
