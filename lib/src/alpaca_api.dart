@@ -42,8 +42,14 @@ class AlpacaApi {
   /// Calendar
   ///
 
-  Future<http.Response> getCalendar({DateTime start, DateTime end}) =>
-      _executeAlpacaRequest(Calendar.get(start: start, end: end));
+  Future<http.Response> getCalendar({
+    DateTime start,
+    DateTime end,
+  }) =>
+      _executeAlpacaRequest(Calendar.get(
+        start: start,
+        end: end,
+      ));
 
   ///
   /// Clock
@@ -55,8 +61,14 @@ class AlpacaApi {
   /// Assets
   ///
 
-  Future<http.Response> getAssets({String status, String assetClass}) =>
-      _executeAlpacaRequest(Asset.get(status: status, assetClass: assetClass));
+  Future<http.Response> getAssets({
+    String status,
+    String assetClass,
+  }) =>
+      _executeAlpacaRequest(Asset.get(
+        status: status,
+        assetClass: assetClass,
+      ));
 
   Future<http.Response> getAsset(String symbol) =>
       _executeAlpacaRequest(Asset.getOne(symbol));
@@ -123,14 +135,24 @@ class AlpacaApi {
   /// Bars
   ///
 
-  Future<http.Response> getBars(String timeframe, symbols,
-          {int limit,
-          DateTime start,
-          DateTime end,
-          DateTime after,
-          DateTime until}) =>
-      _executeAlpacaRequest(Bars.get(timeframe, symbols,
-          limit: limit, start: start, end: end, after: after, until: until));
+  Future<http.Response> getBars(
+    String timeframe,
+    symbols, {
+    int limit,
+    DateTime start,
+    DateTime end,
+    DateTime after,
+    DateTime until,
+  }) =>
+      _executeAlpacaRequest(Bars.get(
+        timeframe,
+        symbols,
+        limit: limit,
+        start: start,
+        end: end,
+        after: after,
+        until: until,
+      ));
 
   /// Executes the given [AlpacaRequest].
   ///

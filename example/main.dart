@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:alpaca/alpaca.dart';
 
 main() async {
-  var alpaca = AlpacaApi(
+  final alpaca = AlpacaApi(
     keyId: 'PK7EQG7Q3RVC6DK4BY99',
     secretKey: 'H5QpmT/QmBoADSDpUeI35GqIvu0C/oYXjTI2DquM',
     paperTrading: true,
@@ -31,6 +31,7 @@ main() async {
 
     for (final bar in bars) {
       print('(${bar['t']}): ${bar['c']}');
+      print('Raw bar:\t$bar');
     }
   }
 }

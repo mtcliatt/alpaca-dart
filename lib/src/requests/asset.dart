@@ -11,7 +11,7 @@ class Asset {
       throw ArgumentError('symbol must be non-empty: $symbol');
     }
 
-    return AlpacaRequest.get('/v1/assets/$symbol');
+    return AlpacaRequest.get('/assets/$symbol');
   }
 
   /// Get a list of assets.
@@ -35,6 +35,6 @@ class Asset {
       params['asset_class'] = '$assetClass';
     }
 
-    return AlpacaRequest.get('/v1/assets', params);
+    return AlpacaRequest.get('/v2/assets', params);
   }
 }

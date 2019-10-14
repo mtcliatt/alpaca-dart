@@ -11,7 +11,7 @@ class Order {
       throw ArgumentError('orderId must be a non-empty String.');
     }
 
-    return AlpacaRequest.delete('/v1/orders/$orderId');
+    return AlpacaRequest.delete('/orders/$orderId');
   }
 
   /// Retrieves a single order for the given [orderId].
@@ -20,7 +20,7 @@ class Order {
       throw ArgumentError('orderId must be a non-empty String.');
     }
 
-    return AlpacaRequest.get('/v1/orders/$orderId');
+    return AlpacaRequest.get('/orders/$orderId');
   }
 
   /// Retrieves a single order for the given [clientOrderId].
@@ -30,7 +30,7 @@ class Order {
     }
 
     return AlpacaRequest.get(
-        '/v1/orders:by_client_order_id', {'client_order_id': clientOrderId});
+        '/orders:by_client_order_id', {'client_order_id': clientOrderId});
   }
 
   /// Retrieves a list of orders for the account,
@@ -86,7 +86,7 @@ class Order {
       }
     }
 
-    return AlpacaRequest.get('/v1/assets', params);
+    return AlpacaRequest.get('/assets', params);
   }
 
   /// Places a new order for the given account.
@@ -144,6 +144,6 @@ class Order {
       }
     }
 
-    return AlpacaRequest.post('/v1/orders', params);
+    return AlpacaRequest.post('/v2/orders', params);
   }
 }

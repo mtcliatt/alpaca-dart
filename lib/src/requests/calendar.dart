@@ -13,6 +13,6 @@ class Calendar {
       params['end'] = '$end';
     }
 
-    return AlpacaRequest.get('/v1/calendar', params);
+    return AlpacaRequest.get('/v2/calendar', params);
   }
 }
